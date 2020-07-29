@@ -8,7 +8,7 @@ import com.yc.game.wuzi.core.WuziGameImpl;
 import com.yc.game.wuzi.swing.WuziWin;
 
 /**
- * 五子棋服务器端
+ * 五子棋服务器
  * @author 李玲芝
  *
  */
