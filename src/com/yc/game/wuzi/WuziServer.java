@@ -7,7 +7,11 @@ import java.net.Socket;
 import com.yc.game.wuzi.core.WuziGameImpl;
 import com.yc.game.wuzi.swing.WuziWin;
 
-
+/**
+ * 五子棋服务器端
+ * @author 李玲芝
+ *
+ */
 public class WuziServer {
 
 	public static void main(String[] args) throws IOException {
