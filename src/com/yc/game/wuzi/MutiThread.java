@@ -22,11 +22,10 @@ public class MutiThread implements Runnable{
 	private FileOutputStream oos;
 	private int x=1;
 	private int y=1;
-	private boolean mySend=false;
-	private boolean myGet=true;
+	private boolean mySend=false; //我当前是否可以发送
 	private boolean isNew=false;  //对方的坐标是否更新了
-	private boolean isFirst=false; //是否是先手
-	private boolean isMyTurn=false; //是否轮到我下子
+	//这个color是自己棋子的颜色不是对方的！！！
+	private int color=2;  //黑子为1  白子为2  默认为白紫，谁是先手，就设置谁为黑子
 	
 	public MutiThread(Socket socket) {
 		this.socket=socket;
@@ -37,7 +36,7 @@ public class MutiThread implements Runnable{
 	 * 获取对手坐标
 	 * @throws IOException
 	 */
-	public void reciveCoordinate() throws IOException {
+	public  void reciveCoordinate() throws IOException {
 		
 		ois=new ObjectInputStream(socket.getInputStream());
 		
@@ -57,7 +56,7 @@ public class MutiThread implements Runnable{
 	 * 发送自己的坐标
 	 * @throws IOException
 	 */
-	public void sendCoordinate() throws IOException {
+	public  void  sendCoordinate() throws IOException {
 		
 		ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
 		System.out.println("发送自己的坐标："+x+"|"+y);
@@ -69,29 +68,29 @@ public class MutiThread implements Runnable{
 
 	@Override
 	public void run() {
-		new Thread("客户端接收：") {
+		new Thread("接收：") {
 			public void run() {
 				while (true) {
 					synchronized (this) {
 						try {
+							//获取对方传送过来的坐标
 							reciveCoordinate();
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					}
-					
+						
 				}
-				
 			}
 		}.start();
 		
-		new Thread("客户端发送：") {
+		new Thread("发送：") {
 			public void run() {
 				while (true) {
-					//this是客户端发送 这个线程
 					synchronized (this) {
 						if(mySend==true) {
 							try {
+								//发送自己的坐标给对方
 								sendCoordinate();
 								
 							} catch (IOException e) {
@@ -99,7 +98,6 @@ public class MutiThread implements Runnable{
 							}
 						}
 					}
-					
 				}
 				
 			}
@@ -108,34 +106,7 @@ public class MutiThread implements Runnable{
 	}
 	
 	
-	public Socket getSocket() {
-		return socket;
-	}
-
-
-	public void setSocket(Socket socket) {
-		this.socket = socket;
-	}
-
-
-	public ObjectInputStream getOis() {
-		return ois;
-	}
-
-
-	public void setOis(ObjectInputStream ois) {
-		this.ois = ois;
-	}
-
-
-	public FileOutputStream getOos() {
-		return oos;
-	}
-
-
-	public void setOos(FileOutputStream oos) {
-		this.oos = oos;
-	}
+	
 
 
 	public int getX() {
@@ -158,23 +129,13 @@ public class MutiThread implements Runnable{
 	}
 
 
-	public boolean isMySend() {
+	public  boolean isMySend() {
 		return mySend;
 	}
 
 
-	public void setMySend(boolean mySend) {
+	public  void setMySend(boolean mySend) {
 		this.mySend = mySend;
-	}
-
-
-	public boolean isMyGet() {
-		return myGet;
-	}
-
-
-	public void setMyGet(boolean myGet) {
-		this.myGet = myGet;
 	}
 
 
@@ -188,25 +149,13 @@ public class MutiThread implements Runnable{
 	}
 
 
-	public boolean isFirst() {
-		return isFirst;
+	public int getColor() {
+		return color;
 	}
 
 
-	public void setFirst(boolean isFirst) {
-		this.isFirst = isFirst;
+	public void setColor(int color) {
+		this.color = color;
 	}
-
-
-	public boolean isMyTurn() {
-		return isMyTurn;
-	}
-
-
-	public void setMyTurn(boolean isMyTurn) {
-		this.isMyTurn = isMyTurn;
-	}
-	
-	
 	
 }

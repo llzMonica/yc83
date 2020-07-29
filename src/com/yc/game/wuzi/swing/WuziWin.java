@@ -34,9 +34,12 @@ public class WuziWin extends BoardWin {
 		new Thread("显示对方下的棋") {
 			public void run() {
 				
-				while(true) {
-					synchronized (this) {
-					while (opponent.isNew()==true) {
+			while(true) {
+				synchronized (this) {
+					if(opponent.isNew()==true) {
+						   
+						   //这个opponent.getColor()是自己棋子的颜色不是对方的！！！
+							if (opponent.getColor()!=game.getColor()) {
 							
 							System.out.println("当前对方的位置："+opponent.getX()+"|"+opponent.getY());
 							// 判断5子是否成立
@@ -62,13 +65,15 @@ public class WuziWin extends BoardWin {
 							}
 							opponent.setNew(false);
 						 }
-					  }
 					}
-				
-				
+			   }
+					
 			}
-		}.start();
-	}
+				
+				
+		}
+	}.start();
+}
 
 	/**
 	 * 构建窗体
@@ -83,8 +88,8 @@ public class WuziWin extends BoardWin {
 	 * @param game
 	 * @param opponent  对方的socket
 	 */
-	public WuziWin(WuziGame game,MutiThread opponent) {
-		super("开森五子棋", game, Imgs.CHESS);
+	public WuziWin(WuziGame game,MutiThread opponent,String side) {
+		super("开森五子棋:"+side, game, Imgs.CHESS);
 		this.game = game;
 		this.opponent=opponent;
 	}
@@ -110,33 +115,38 @@ public class WuziWin extends BoardWin {
 
 				@Override
 				public void mousePressed(MouseEvent e) {
-					    
-					// 判断5子是否成立
-					if (game.getWuzi() != null) {
-						return;
-					}
-					
-					// 获取当前点击的控件
-					BoardLabel ml = (BoardLabel) e.getSource();
-					// 获取控件中保存的坐标, 并在该坐标处下子
-					game.down(ml.getBoardX(), ml.getBoardY());
-					// 刷新界面, 显示下的子
-					refresh();
-					
-					//把自己下的棋子传给对方
-					opponent.setMySend(true);  
-					System.out.println("当前自己的位置:"+ml.getBoardX()+"\t"+ml.getBoardY());
-					opponent.setX(ml.getBoardX());
-					opponent.setY(ml.getBoardY());
-					opponent.setMySend(false);  
-					
-					// 如果五子连珠成立, 则提示完成
-					if (game.getWuzi() != null) {
-						String color = (int) game.getWinner() == WuziGame.BLACK ? "黑" : "白";
-						JOptionPane.showMessageDialog(null, color + "棋赢了!");
-					}
-				}
 				
+					synchronized (this) {
+						//这个opponent.getColor()是自己棋子的颜色不是对方的！！！
+						if (opponent.getColor()==game.getColor()) {
+							if (game.getWuzi() != null) {
+								return;
+							}
+							
+							// 获取当前点击的控件
+							BoardLabel ml = (BoardLabel) e.getSource();
+							// 获取控件中保存的坐标, 并在该坐标处下子
+							game.down(ml.getBoardX(), ml.getBoardY());
+							// 刷新界面, 显示下的子
+							refresh();
+							
+							//把自己下的棋子传给对方
+							opponent.setMySend(true);  
+							System.out.println("当前自己的位置:"+ml.getBoardX()+"\t"+ml.getBoardY());
+							opponent.setX(ml.getBoardX());
+							opponent.setY(ml.getBoardY());
+							opponent.setMySend(false);  
+							
+							// 如果五子连珠成立, 则提示完成
+							if (game.getWuzi() != null) {
+								String color = (int) game.getWinner() == WuziGame.BLACK ? "黑" : "白";
+								JOptionPane.showMessageDialog(null, color + "棋赢了!");
+							}
+						
+						}
+					}	
+					
+				}
 			};
 		}
 		bl.addMouseListener(ma);

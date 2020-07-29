@@ -8,7 +8,7 @@ import com.yc.game.wuzi.core.WuziGameImpl;
 import com.yc.game.wuzi.swing.WuziWin;
 
 /**
- * 五子棋服务器
+ * 五子棋服务器端
  * @author 李玲芝
  *
  */
@@ -23,11 +23,13 @@ public class WuziServer {
 		new Thread() {
 			public void run() {
 				System.out.println("IP:"+socket.getInetAddress()+"已连接");
+				
+				//根据socket创建多线程类用于监听对方消息和发送消息给对方
 				MutiThread mutiClient=new MutiThread(socket);
-				mutiClient.setMyTurn(true); //设置当前轮到我为true
 				new Thread(mutiClient,"服务器端").start();
-				System.out.println(Thread.currentThread().getName());
-				new WuziWin(new WuziGameImpl(),mutiClient).start();
+				
+				//创建棋盘
+				new WuziWin(new WuziGameImpl(),mutiClient,"服务器端").start();
 			}
 		}.start();
 		
